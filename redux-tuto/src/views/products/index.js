@@ -1,39 +1,10 @@
-import React from "react";
+import React, { useEffect } from "react";
 import styled from "styled-components";
 import ProductCard from "../components/product-card/index";
-
+import { useDispatch, useSelector } from "react-redux";
+import { UseDispatch } from "react-redux";
+import { getAllProducts } from "../../features/products/redux/ProductThunks";
 // Mock data for products
-const products = [
-  {
-    id: 1,
-    name: "Stylish Headphones",
-    description: "High-quality wireless headphones with noise cancellation.",
-    price: "99.99",
-    imageUrl: "https://via.placeholder.com/350x200",
-  },
-  {
-    id: 2,
-    name: "Smart Watch",
-    description: "Track your fitness and receive notifications.",
-    price: "199.99",
-    imageUrl: "https://via.placeholder.com/350x200",
-  },
-  {
-    id: 3,
-    name: "Smart Watch",
-    description: "Track your fitness and receive notifications.",
-    price: "199.99",
-    imageUrl: "https://via.placeholder.com/350x200",
-  },
-  {
-    id: 4,
-    name: "Smart Watch",
-    description: "Track your fitness and receive notifications.",
-    price: "199.99",
-    imageUrl: "https://via.placeholder.com/350x200",
-  },
-  // Add more products here
-];
 
 // Styled components for the layout
 const Container = styled.div`
@@ -77,12 +48,18 @@ const Footer = styled.footer`
 
 // ProductListPage component
 const ProductListPage = () => {
+  const dispatch = useDispatch();
+  const products = useSelector((state) => state?.products?.products);
+  console.log("products", products);
+  useEffect(() => {
+    dispatch(getAllProducts());
+  }, [dispatch]);
   return (
     <Container>
       <Header>Product Store</Header>
       <ProductGrid>
-        {products.map((product) => (
-          <ProductCard key={product.id} product={product} />
+        {products?.map((product, index) => (
+          <ProductCard key={index} product={product} />
         ))}
       </ProductGrid>
       <Footer>© 2024 My Product Store. All rights reserved.</Footer>

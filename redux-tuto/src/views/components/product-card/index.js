@@ -18,7 +18,7 @@ const Card = styled.div`
 
 const ProductImage = styled.img`
   width: 100%;
-  // height: 00px;
+  height: 100px;
   object-fit: cover;
 `;
 
@@ -94,9 +94,9 @@ const ActionButton = styled.button`
 const ProductCard = ({ product }) => {
   return (
     <Card>
-      <ProductImage src={product.imageUrl} alt={product.name} />
+      <ProductImage src={product.thumbnail} alt={product.title} />
       <ProductDetails>
-        <ProductTitle>{product.name}</ProductTitle>
+        <ProductTitle>{product.title}</ProductTitle>
         <ProductDescription>{product.description}</ProductDescription>
         <ProductPrice>${product.price}</ProductPrice>
       </ProductDetails>

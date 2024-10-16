@@ -1,21 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
+import { getAllPosts } from "../../features/posts/redux/PostThunks";
 
 // Mock data for posts and authors
-const initialPosts = [
-  {
-    id: 1,
-    title: "First Post",
-    content: "This is the content of the first post.",
-    author: { name: "John Doe", email: "john@example.com" },
-  },
-  {
-    id: 2,
-    title: "Second Post",
-    content: "This is the content of the second post.",
-    author: { name: "Jane Smith", email: "jane@example.com" },
-  },
-];
 
 // Styled components for the layout
 const Container = styled.div`
@@ -117,7 +105,10 @@ const TextArea = styled.textarea`
 
 // PostsPage component
 const PostsPage = () => {
-  const [posts, setPosts] = useState(initialPosts);
+  const dispatch = useDispatch();
+  const initialPosts = useSelector((state) => state?.posts?.posts);
+  console.log("initialPosts", initialPosts);
+  // const [posts, setPosts] = useState(initialPosts);
   const [newPost, setNewPost] = useState({
     title: "",
     content: "",
@@ -151,20 +142,22 @@ const PostsPage = () => {
     e.preventDefault();
     if (editingPost) {
       // Update post
-      setPosts(
-        posts.map((post) => (post.id === editingPost.id ? newPost : post))
+      initialPosts(
+        initialPosts.map((post) =>
+          post.id === editingPost.id ? newPost : post
+        )
       );
       setEditingPost(null);
     } else {
       // Create new post
-      setPosts([...posts, { ...newPost, id: Date.now() }]);
+      initialPosts([...initialPosts, { ...newPost, id: Date.now() }]);
     }
     setNewPost({ title: "", content: "", author: { name: "", email: "" } });
   };
 
   // Delete Post
   const handleDelete = (postId) => {
-    setPosts(posts.filter((post) => post.id !== postId));
+    initialPosts(initialPosts.filter((post) => post.id !== postId));
   };
 
   // Edit Post
@@ -173,28 +166,31 @@ const PostsPage = () => {
     setEditingPost(post);
   };
 
+  useEffect(() => {
+    dispatch(getAllPosts());
+  }, [dispatch]);
   return (
     <Container>
       <Header>Posts Page</Header>
-
       {/* Post List */}
       <PostList>
-        {posts.map((post) => (
-          <PostCard key={post.id}>
-            <PostTitle>{post.title}</PostTitle>
-            <PostContent>{post.content}</PostContent>
-            <PostAuthor>
+        {initialPosts &&
+          initialPosts?.map((post, index) => (
+            <PostCard key={index}>
+              <PostTitle>{post.title}</PostTitle>
+              <PostContent>{post.content}</PostContent>
+              {/* <PostAuthor>
               By {post.author.name} ({post.author.email})
-            </PostAuthor>
-            <ActionButton onClick={() => handleEdit(post)}>Edit</ActionButton>
-            <ActionButton
-              className="delete"
-              onClick={() => handleDelete(post.id)}
-            >
-              Delete
-            </ActionButton>
-          </PostCard>
-        ))}
+            </PostAuthor> */}
+              <ActionButton onClick={() => handleEdit(post)}>Edit</ActionButton>
+              <ActionButton
+                className="delete"
+                onClick={() => handleDelete(post.id)}
+              >
+                Delete
+              </ActionButton>
+            </PostCard>
+          ))}
       </PostList>
 
       {/* Form for Creating or Editing Post */}
